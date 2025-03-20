@@ -7,9 +7,10 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
 {
     public Button[] boardButtons; // UI Buttons for the grid
     public Text statusText; // UI Text for feedback
+    public Text PlayerNameText; // UI Text for feedback
     private int[] boardState = new int[9]; // 0 = empty, 1 = Player 1, 2 = Player 2
     private int currentPlayer = 1; // 1 for Player 1, 2 for Player 2
-
+    public GameObject PlayAgainBtn;
     void Start()
     {
         PhotonNetwork.ConnectUsingSettings();
@@ -22,14 +23,15 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        Debug.Log("Joined Room"+PhotonNetwork.CurrentRoom.Name);
+        Debug.Log("Joined Room" + PhotonNetwork.CurrentRoom.Name);
+        PlayerNameText.text = "I am Player "+ PhotonNetwork.LocalPlayer.ActorNumber;
         ResetBoard();
         UpdateUI();
     }
 
     public void OnCellClicked(int index)
     {
-        Debug.Log("PhotonNetwork.LocalPlayer.ActorNumber"+ PhotonNetwork.LocalPlayer.ActorNumber);
+        Debug.Log("PhotonNetwork.LocalPlayer.ActorNumber" + PhotonNetwork.LocalPlayer.ActorNumber);
         Debug.Log("CurrentPlayer" + currentPlayer);
         if (!PhotonNetwork.IsConnected || PhotonNetwork.LocalPlayer.ActorNumber != currentPlayer) return;
         if (boardState[index] == 0)
@@ -80,6 +82,12 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
                 DisableBoard();
                 return;
             }
+            if (CheckDraw())
+            {
+                statusText.text = "Match Draw!";
+                DisableBoard();
+                return;
+            }
             currentPlayer = (player == 1) ? 2 : 1;
             UpdateUI();
         }
@@ -103,6 +111,17 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
         }
         return false;
     }
+    bool CheckDraw()
+    {
+        foreach (var state in boardState)
+        {
+            if (state != 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     void UpdateUI()
     {
@@ -116,6 +135,10 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
             boardState[i] = 0;
             boardButtons[i].GetComponentInChildren<Text>().text = "";
         }
+        foreach (Button btn in boardButtons)
+        {
+            btn.interactable = true;
+        }
         currentPlayer = 1;
         UpdateUI();
     }
@@ -126,5 +149,12 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
         {
             btn.interactable = false;
         }
+        PlayAgainBtn.SetActive(true);
+    }
+    public void PlayGameAgain()
+    {
+        PlayAgainBtn.SetActive(false);
+        ResetBoard();
+        UpdateUI();
     }
 }
