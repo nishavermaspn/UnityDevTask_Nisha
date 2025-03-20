@@ -7,7 +7,7 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
 {
     public Button[] boardButtons; // UI Buttons for the grid
     public Text statusText; // UI Text for feedback
-    public Text PlayerNameText; // UI Text for feedback
+    public Text PlayerNameText; // UI Text for localPlayerName
     private int[] boardState = new int[9]; // 0 = empty, 1 = Player 1, 2 = Player 2
     private int currentPlayer = 1; // 1 for Player 1, 2 for Player 2
     public GameObject PlayAgainBtn;
