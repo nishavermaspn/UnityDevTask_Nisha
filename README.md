@@ -1,5 +1,8 @@
 # UnityDevTask_Nisha
+This project is compatible with android platform, please switch the platform for better UI representation.
+
 This contains two unity developer tasks -
+
 1- Reconnection in Photon for a Unity Multiplayer Game
 
 Location - In asset folder Task1_Reconnection named folder is present, which includes scene and scripts associated to task-1.
